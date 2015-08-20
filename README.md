@@ -9,11 +9,10 @@ Download from the
 The Murl Tools extension adds the following two commands to the context menu of the Solution Explorer:
 - "Duplicate" to create a copy of the selected file(s).
 - "Refresh" to add missing files that exist in the folder but not in the selected filter.
-
-The extension additionally adds a Remove/Delete dialog when deleting files (VisualC projects only).
+- The extension additionally adds a Remove/Delete dialog when deleting files (VisualC projects only).
 
 These features are especially useful for cross platform projects where the source and data files are not stored inside of the project folder 
-(e.g. Murl Engine http://murlengine.com).
+(e.g. [Murl Engine](http://murlengine.com)).
 
 ### Duplicate File(s)
 
@@ -25,8 +24,7 @@ The command creates a copy of the selected file and adds it to project within he
 
 ![Duplicate](screenshots/duplicate.png)
 
-Further information about that issue can be found here: https://social.msdn.microsoft.com/Forums/en-US/e0f65466-c164-4c9e-ac14-27cf503c43e2
-You can vote for CTRL-C and CTRL-V feature here: http://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/9145699-solution-explorer-should-support-ctrl-c-ctrl-v-in
+You can also vote for the feature [here](http://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/9145699-solution-explorer-should-support-ctrl-c-ctrl-v-in).
 
 ### Refresh Folder
 
@@ -47,8 +45,8 @@ The extension fixes this weird behavior and always displays a Remove/Delete dial
 
 ![Remove Delete Dialog](screenshots/remove_delete_dialog.png)
 
-### Authors and Contributors
-You can @mention a GitHub username to generate a link to their profile. The resulting `<a>` element will link to the contributor’s GitHub Profile. For example: In 2007, Chris Wanstrath (@defunkt), PJ Hyett (@pjhyett), and Tom Preston-Werner (@mojombo) founded GitHub.
+You can vote for the feature [here](http://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/9146353-remove-delete-dialog-should-show-up-when-deleting).
 
 ### Support or Contact
-Having trouble with Pages? Check out our [documentation](https://help.github.com/pages) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+
+Having trouble with the extension? Check out our [forum](http://murlengine.com/forum) or contact us per [email](spraylight.at/?splpage=contact).
