@@ -24,7 +24,7 @@ The command creates a copy of the selected file and adds it to project within he
 
 ![Duplicate](screenshots/duplicate.png)
 
-You can also vote for the feature [here](http://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/9145699-solution-explorer-should-support-ctrl-c-ctrl-v-in).
+If you want the CTR-C / CTRL-V feature in Visual Studio, you can vote for it [here](http://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/9145699-solution-explorer-should-support-ctrl-c-ctrl-v-in).
 
 ### Refresh Folder
 
@@ -45,7 +45,7 @@ The extension fixes this weird behavior and always displays a Remove/Delete dial
 
 ![Remove Delete Dialog](screenshots/remove_delete_dialog.png)
 
-You can vote for the feature [here](http://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/9146353-remove-delete-dialog-should-show-up-when-deleting).
+If you want this feature in Visual Studio, you can vote for it [here](http://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/9146353-remove-delete-dialog-should-show-up-when-deleting).
 
 ### Support or Contact
 
