@@ -21,7 +21,7 @@ To create a copy of an existing file in the Solution Explorer you usually select
 While this is working for C# and VB projects, it does not work for VisualC/C++ projects.
 
 The extension adds a Duplicate command to the context menu of the Solution Explorer.
-The command creates a copy of the selected file and adds it to project within he same filter group.
+The command creates a copy of the selected file and adds it to project within he same filter.
 
 ![Duplicate](screenshots/duplicate.png)
 
@@ -30,15 +30,16 @@ Side note: If you want the CTR-C / CTRL-V feature in Visual Studio, you can vote
 ### Refresh Folder
 
 This command adds references for all missing files that exist in the folder (file system) but not in the selected filter (project).
-Note, that this command only makes sense when your filter hierarchy matches to real folders in the file system.
+Note, that this command only makes sense when your filter matches to a folder in the file system.
 
 ![Refresh](screenshots/refresh.png)
 
 ### Remove/Delete Dialog
 
-If someone selects one or more files in the solution explorer of a VisualC/C++ project and then presses the delete key, he usually will get a dialog where he can choose to remove or to delete the file(s).
-You can decide if only the file reference(s) should be removed from the project or if also the file(s) itself should be permanently deleted in the file system.
-Unfortunately the dialog only shows up if the selected files are stored inside of the project folder which is not the case for e.g. cross platform projects where multiple projects/platforms share the same source code files.
+If someone selects one or more files in the solution explorer of a VisualC/C++ project and then presses the delete key, he usually gets a dialog where he can choose to remove or to delete the file(s).
+You can decide if only the file reference(s) should be removed from the project or if also the file(s) itself should be permanently deleted from the file system.
+
+Unfortunately the dialog only shows up if the selected files are stored in the project folder which is not the case for e.g. cross platform projects where multiple projects/platforms share the same source code files.
 
 The extension fixes this weird behavior and always displays a Remove/Delete dialog.
 
