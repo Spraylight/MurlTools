@@ -182,7 +182,6 @@
     <Content Include="MurlTools.ico">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Resource Include="icon_orig.png" />
     <Content Include="license.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
