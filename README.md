@@ -1,14 +1,13 @@
 ## Murl Tools
 ### A Visual Studio extension for VS2013 & VS2015
 
-Download from the
-[Visual Studio Gallery](https://visualstudiogallery.msdn.microsoft.com/TBD)
+Download from the [MSDN Visual Studio Gallery](https://gallery.msdn.microsoft.com/ebc2b8d7-9f1b-4e9d-88f7-daf924e422ec)
 
 ## Summary
 
 This extension adds some useful commands to the Solution Explorer of Visual Studio. 
-The extension has been made to improve the work flow with [Murl Engine](http://murlengine.com) projects but 
-is beneficial for every cross platform VisualC project where the source and data files are not stored inside of the project folder.
+The extension has been created to improve the work flow with [Murl Engine](http://murlengine.com) projects but 
+is beneficial for every cross platform VisualC/C++ project where the source and data files are not stored inside the project folder.
 
 The Murl Tools extension adds the following commands to the context menu of the Solution Explorer:
 - "Duplicate" to create a copy of the selected file(s).
@@ -25,12 +24,12 @@ The command creates a copy of the selected file and adds it to project within he
 
 ![Duplicate](screenshots/duplicate.png)
 
-Side note: If you want the CTR-C / CTRL-V feature in Visual Studio, you can vote for it [here](http://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/9145699-solution-explorer-should-support-ctrl-c-ctrl-v-in).
+Side note: If you want the CTRL-C / CTRL-V feature in Visual Studio, you can vote for it [here](http://visualstudio.uservoice.com/forums/121579-visual-studio/suggestions/9145699-solution-explorer-should-support-ctrl-c-ctrl-v-in).
 
 ### Refresh Folder
 
 This command adds references for all missing files that exist in the folder (file system) but not in the selected filter (project).
-Note, that this command only makes sense when your filter matches to a folder in the file system.
+Note, that this command only makes sense when your filter corresponds to a folder in the file system.
 
 ![Refresh](screenshots/refresh.png)
 
