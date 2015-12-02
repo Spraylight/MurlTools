@@ -6,9 +6,13 @@ using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
 using EnvDTE;
+using EnvDTE80;
+using EnvDTE90;
+using EnvDTE100;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.VCProjectEngine;
 
 namespace Spraylight.MurlTools
 {
@@ -123,6 +127,37 @@ namespace Spraylight.MurlTools
             }
         }
 
+        private bool IsVCProject()
+        {
+            EnvDTE80.DTE2 _applicationObject = GetGlobalService(typeof(DTE)) as EnvDTE80.DTE2;
+            if (_applicationObject.ActiveWindow.Object != _applicationObject.ToolWindows.SolutionExplorer)
+                return false;
+
+            Array projs = _applicationObject.ActiveSolutionProjects as Array;
+            if (projs.Length == 0)
+            {
+                return false;
+            }
+
+            string type = "Unknown";
+            try
+            {
+                EnvDTE.Project proj = projs.GetValue(0) as EnvDTE.Project;
+                if (HasProperty(proj.Properties, "Kind"))
+                {
+                    type = proj.Properties.Item("Kind").Value.ToString();
+                }
+                if (type.Equals("VCProject"))
+                {
+                    //VCProject vcProject = (VCProject)proj.Object;
+                    return true;
+                }
+            }
+            catch (Exception) { }
+
+            return false;
+        }
+
         /// <summary>
         /// Called on Edit.Delete command events
         /// </summary>
@@ -133,26 +168,7 @@ namespace Spraylight.MurlTools
         /// <param name="CancelDefault"></param>
         private void OnBeforeDeleteCommand(string Guid, int ID, Object CustomIn, Object CustomOut, ref bool CancelDefault)
         {
-            EnvDTE80.DTE2 _applicationObject = GetGlobalService(typeof(DTE)) as EnvDTE80.DTE2;
-            if (_applicationObject.ActiveWindow.Object != _applicationObject.ToolWindows.SolutionExplorer)
-                return;
-
-            Array projs = _applicationObject.ActiveSolutionProjects as Array;
-            if (projs.Length == 0)
-            {
-                return;
-            }
-
-            string type = "Unknown";
-            try
-            {
-                EnvDTE.Project proj = projs.GetValue(0) as EnvDTE.Project;
-                if (HasProperty(proj.Properties,"Kind"))
-                    type = proj.Properties.Item("Kind").Value.ToString();
-            }
-            catch (Exception) { }
-
-            if (!type.Equals("VCProject"))
+            if (!IsVCProject())
             {
                 return;
             }
@@ -319,6 +335,11 @@ namespace Spraylight.MurlTools
 
         private void MenuItemCallbackRefresh(object sender, EventArgs e)
         {
+            if (!IsVCProject())
+            {
+                return;
+            }
+
             RefreshSelectedFolder();
         }
 
@@ -327,7 +348,7 @@ namespace Spraylight.MurlTools
         /// </summary>
         void RefreshSelectedFolder()
         {
-            List<string> pathList = new List<string>();
+            
             EnvDTE80.DTE2 _applicationObject = GetGlobalService(typeof(DTE)) as EnvDTE80.DTE2;
 
             object[] selectedItems = (object[])_applicationObject.ToolWindows.SolutionExplorer.SelectedItems;
@@ -338,19 +359,26 @@ namespace Spraylight.MurlTools
                     continue;
                 }
 
-                pathList.Clear();
-                string path = "";
-                // Remove references which are dont exist
-                foreach (UIHierarchyItem item in selectedItem.UIHierarchyItems)
+                string path =  determinePath(selectedItem);
+                if (path.Length > 0)
                 {
-                    if (!(item.Object is EnvDTE.ProjectItem))
-                    {
-                        continue;
-                    }
+                    RefreshSelectedFolder(selectedItem, path);
+                }
+            }
+        }
 
+        private string determinePath(EnvDTE.UIHierarchyItem selectedItem)
+        {
+            List<UIHierarchyItem> filterList = new List<UIHierarchyItem>();
+            // try to determine path from files
+            foreach (UIHierarchyItem item in selectedItem.UIHierarchyItems)
+            {
+                if (item.Object is EnvDTE.ProjectItem)
+                {
                     if (item.UIHierarchyItems != null && item.UIHierarchyItems.Count > 0)
                     {
                         //filter element
+                        filterList.Add(item);
                         continue;
                     }
 
@@ -358,51 +386,156 @@ namespace Spraylight.MurlTools
                     Property prop = GetProperty(prjItem.Properties, "FullPath");
                     if (prop != null)
                     {
-                        path = prop.Value.ToString();
-                        if (!File.Exists(path))
+                        string res = Path.GetDirectoryName(prop.Value.ToString());
+                        if (Directory.Exists(res))
                         {
-                            // remove prjItem if path does not exist
+                            return Path.GetDirectoryName(prop.Value.ToString());
+                        }
+                    }
+                }
+            }
+            // try to determine path from sub folders/filters
+            foreach (UIHierarchyItem item in filterList)
+            {
+                string path = determinePath(item);
+                if (path.Length > 0)
+                {
+                    try
+                    {
+                        string res = path.Substring(0, path.Length - item.Name.Length-1);
+                        if (res.EndsWith(selectedItem.Name) && Directory.Exists(res))
+                        {
+                            return res;
+                        }
+                    }
+                    catch (Exception) { }
+                }
+            }
+            // not able to determine path
+            return "";
+        }
+
+        private void RefreshSelectedFolder(EnvDTE.UIHierarchyItem selectedItem, string dir)
+        {
+            List<string> pathList = new List<string>();
+            List<UIHierarchyItem> filterList = new List<UIHierarchyItem>();
+            string path = "";
+            // Remove references which aren't exist
+            foreach (UIHierarchyItem item in selectedItem.UIHierarchyItems)
+            {
+                if (!(item.Object is EnvDTE.ProjectItem))
+                {
+                    continue;
+                }
+
+                if (item.UIHierarchyItems != null && item.UIHierarchyItems.Count > 0)
+                {
+                    filterList.Add(item);
+                    //filter element
+                    continue;
+                }
+
+                ProjectItem prjItem = item.Object as ProjectItem;
+                Property prop = GetProperty(prjItem.Properties, "FullPath");
+                if (prop != null)
+                {
+                    path = prop.Value.ToString();
+                    if (!File.Exists(path))
+                    {
+                        // remove prjItem if path does not exist
+                        try
+                        {
+                            prjItem.Remove();
+                        }
+                        catch (Exception) { }
+                    }
+                    else
+                    {
+                        // else store in pathList
+                        pathList.Add(path);
+                    }
+                }
+                else
+                { 
+                    //empty filter
+                    filterList.Add(item);
+                }
+            }
+
+            // Add existing files which are not in pathList
+            if (dir.Length > 0)
+            {
+                string[] fileEntries = Directory.GetFiles(dir);
+                foreach (string fileName in fileEntries)
+                {
+                    if (!pathList.Contains(fileName))
+                    {
+                        ProjectItem filter = selectedItem.Object as EnvDTE.ProjectItem;
+                        if (filter != null && filter.ProjectItems != null)
+                        {
                             try
                             {
-                                prjItem.Remove();
+                                filter.ProjectItems.AddFromFile(fileName);
                             }
                             catch (Exception) { }
                         }
-                        else
-                        {
-                            // else store in pathList
-                            pathList.Add(path);
-                        }
                     }
                 }
+            }
 
-                // use path of last removed reference if no element is left in filter
-                if (pathList.Count > 0)
+            // Add existing directories which are not listed as filters
+            if (dir.Length > 0)
+            {
+                string[] dirEntries = Directory.GetDirectories(dir);
+                List<string> fl = new List<string>();
+                foreach (UIHierarchyItem item in filterList)
                 {
-                    path = pathList[0];
+                    fl.Add(dir+"\\"+item.Name);
                 }
-
-                // Add existing files which are not in pathList
-                if (path.Length > 0)
+                foreach (string dirName in dirEntries)
                 {
-                    string dir = Path.GetDirectoryName(path);
-                    string[] fileEntries = Directory.GetFiles(dir);
-                    foreach (string fileName in fileEntries)
+                    if (!fl.Contains(dirName))
                     {
-                        if (!pathList.Contains(fileName) )
+                        ProjectItem filter = selectedItem.Object as EnvDTE.ProjectItem;
+                        VCFilter vcFilter = (VCFilter)filter.Object;
+                        if (vcFilter != null)
                         {
-                            ProjectItem filter = selectedItem.Object as EnvDTE.ProjectItem;
-                            if (filter != null && filter.ProjectItems != null)
-                            {
-                                try
-                                {
-                                    filter.ProjectItems.AddFromFile(fileName);
-                                }
-                                catch (Exception) { }
-                            }
+                            addNewFilterRecursive(vcFilter, dirName, dir);
                         }
+                        // add
+                        Debug.WriteLine(dirName);
                     }
                 }
+            }
+
+            // recursively update sub dirs/filters
+            foreach (UIHierarchyItem item in filterList)
+            {
+                string newPath = dir + "\\" + item.Name;
+                if (Directory.Exists(newPath))
+                {
+                    RefreshSelectedFolder(item, newPath);
+                }
+            }
+        }
+
+        private void addNewFilterRecursive(VCFilter vcFilter, string dirName, string dir)
+        {
+            string filterName = dirName.Substring(dir.Length + 1);
+            VCFilter newFilter = vcFilter.AddFilter(filterName);
+            
+            // add files
+            string[] fileEntries = Directory.GetFiles(dirName);
+            foreach (string file in fileEntries)
+            {
+                newFilter.AddFile(file);
+            }
+
+            // add directories as filter
+            string[] dirEntries = Directory.GetDirectories(dirName);
+            foreach (string d in dirEntries)
+            {
+                addNewFilterRecursive(newFilter, d, dirName);
             }
         }
 

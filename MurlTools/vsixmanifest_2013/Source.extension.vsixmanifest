@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="20c3d528-1bd2-4d75-972b-410659112b6c" Version="1.2" Language="en-US" Publisher="Spraylight" />
+    <DisplayName>Murl Tools</DisplayName>
+    <Description xml:space="preserve">Solution Explorer context menu commands:
+- "Duplicate" to create a copy of the selected file(s).
+- "Refresh" to add missing files that exist in the folder but not in the selected filter (VisualC projects only).
+- Additionally adds a Remove/Delete dialog when deleting files (VisualC projects only).</Description>
+    <MoreInfo>http://spraylight.at/murltools</MoreInfo>
+    <License>license.txt</License>
+    <ReleaseNotes>releas_notes.txt</ReleaseNotes>
+    <Icon>icon.png</Icon>
+    <PreviewImage>icon.png</PreviewImage>
+    <Tags>Solution Explorer, remove, delete, dialog, duplicate, file, copy, paste, refresh, folder, Murl, Engine</Tags>
+  </Metadata>
+  <Installation InstalledByMsi="false">
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[12.0,12.0]" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[12.0,12.0]"/>
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    <Dependency Id="Microsoft.VisualStudio.MPF.12.0" DisplayName="Visual Studio MPF 12.0" d:Source="Installed" Version="[12.0,15.0)" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+  </Assets>
+</PackageManifest>
