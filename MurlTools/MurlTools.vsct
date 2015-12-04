@@ -49,6 +49,10 @@
       </Group>
       -->
       
+      <Group guid="guidShowHelpCmdSet" id="MurlToolsMenuGroup" priority="0xFF72">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+      </Group>
+            
       <Group guid="guidDuplicateFileCmdSet" id="SolutionMenuGroup" priority="0x0601">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
       </Group>
@@ -70,14 +74,14 @@
               <CommandFlag>DefaultInvisible</CommandFlag>
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node /> -->
-      <!--  No standard Menu item 
-      <Button guid="guidDuplicateFileCmdSet" id="cmdidDuplicateFile" priority="0x0100" type="Button">
+
+      <!--  No <Button guid="guidDuplicateFileCmdSet" id="cmdidDuplicateFile" priority="0x0100" type="Button">
         <Parent guid="guidDuplicateFileCmdSet" id="DuplicateFileMenuGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
         <Strings>
           <ButtonText>Duplicate</ButtonText>
         </Strings>
-      </Button>
+      </Button>standard Menu item 
       -->
 
       <!--  No toolbar item
@@ -93,10 +97,17 @@
       </Button>
       -->
       
+      <Button guid="guidShowHelpCmdSet" id="cmdidShowHelp" priority="0x0100" type="Button">
+        <Parent guid="guidShowHelpCmdSet" id="MurlToolsMenuGroup" />
+        <Strings>
+          <ButtonText>Murl Engine API Reference</ButtonText>
+        </Strings>
+      </Button>
+            
       <Button guid="guidDuplicateFileCmdSet" id="cmdidDuplicateFile" priority="0x0100" type="Button">
         <Parent guid="guidDuplicateFileCmdSet" id="SolutionMenuGroup" />
         <Icon guid="guidImages" id="bmpPic1" />
-        <!--  No dynamic visibility
+        <!-- No dynamic visibility
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         -->
@@ -140,11 +151,15 @@
   -->
   
   <!-- 
+    single quote english keyboard
+    <KeyBinding guid="guidShowHelpCmdSet" id="cmdidShowHelp" editor="guidVSStd97" key1="VK_OEM_7" mod1="Control Shift"/>
+    single quote german keyboard
+    <KeyBinding guid="guidShowHelpCmdSet" id="cmdidShowHelp" editor="guidVSStd97" key1="VK_OEM_2" mod1="Control Shift"/>
+    -->
   <KeyBindings>
-    <KeyBinding guid="guidDuplicateFileCmdSet" id="cmdidDuplicateFile" editor="guidVSStd97" key1="W" mod1="Control Alt"/>
+    <KeyBinding guid="guidShowHelpCmdSet" id="cmdidShowHelp" editor="guidVSStd97" key1="VK_F1" mod1="Control Shift"/>
   </KeyBindings>
-  -->
-
+  
   <Symbols>
     <!-- This is the package guid. -->
     <GuidSymbol name="guidMurlToolsPkg" value="{20c3d528-1bd2-4d75-972b-410659112b6c}" />
@@ -157,18 +172,18 @@
       <!--  No toolbar item
       <IDSymbol name="SolutionToolbarGroup" value="0x0190"/>
       -->
-      <IDSymbol name="SolutionMenuGroup"        value="0x0191"/>
-      
+      <IDSymbol name="SolutionMenuGroup"  value="0x0191"/>
       <IDSymbol name="cmdidDuplicateFile" value="0x0100" />
-      
     </GuidSymbol>
 
     <GuidSymbol name="guidRefreshCmdSet" value="{6367E3B5-0D8B-4611-B42E-01DA8D19390C}">
-
       <IDSymbol name="SolutionMenuGroupFolder"  value="0x0191"/>
-
       <IDSymbol name="cmdidRefresh"       value="0x0101" />
+    </GuidSymbol>
 
+    <GuidSymbol name="guidShowHelpCmdSet" value="{8C069995-DA2F-4C6E-9807-ABA2FDC58253}">
+      <IDSymbol name="MurlToolsMenuGroup" value="0x1020" />
+      <IDSymbol name="cmdidShowHelp" value="0x0102" />
     </GuidSymbol>
     
     <GuidSymbol name="guidImages" value="{8bb86390-5aa8-406c-b8a3-ad81c92043fd}" >

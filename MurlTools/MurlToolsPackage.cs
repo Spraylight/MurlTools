@@ -11,6 +11,7 @@ using EnvDTE90;
 using EnvDTE100;
 using System.Collections.Generic;
 using System.IO;
+using System.Web;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.VCProjectEngine;
 
@@ -80,6 +81,15 @@ namespace Spraylight.MurlTools
                 // Create the command for the menu item.
                 CommandID menuCommandID = new CommandID(GuidList.guidRefreshCmdSet, (int)PkgCmdIDList.cmdidRefreshCmd);
                 MenuCommand menuItem = new MenuCommand(MenuItemCallbackRefresh, menuCommandID);
+                mcs.AddCommand(menuItem);
+            }
+
+            // Add our command handlers for menu (commands must exist in the .vsct file)
+            if (null != mcs)
+            {
+                // Create the command for the menu item.
+                CommandID menuCommandID = new CommandID(GuidList.guidShowHelpCmdSet, (int)PkgCmdIDList.cmdidShowHelp);
+                MenuCommand menuItem = new MenuCommand(MenuItemCallbackShowHelp, menuCommandID);
                 mcs.AddCommand(menuItem);
             }
 
@@ -331,6 +341,52 @@ namespace Spraylight.MurlTools
         {
             EnvDTE80.DTE2 _applicationObject = GetGlobalService(typeof(DTE)) as EnvDTE80.DTE2;
             _applicationObject.ExecuteCommand("File.Rename");
+        }
+
+        /*
+         * See also http://www.mztools.com/articles/2006/MZ2006009.aspx for info about how to determine the code element at the cursor position.
+         */
+        private void MenuItemCallbackShowHelp(object sender, EventArgs e)
+        {
+            EnvDTE80.DTE2 dte = GetGlobalService(typeof(DTE)) as EnvDTE80.DTE2;
+            string searchText = "";
+            try
+            {
+                Document activeDoc = dte.ActiveDocument;
+                if (activeDoc != null && activeDoc.Selection != null)
+                {
+                    TextSelection sel = activeDoc.Selection as TextSelection;
+
+                    if (sel.Text.Length == 0)
+                    {
+                        sel.WordLeft(true);
+                        searchText = sel.Text;
+                        sel.WordRight(true);
+                        searchText = searchText + sel.Text;
+                    }
+                    else
+                    {
+                        searchText = sel.Text;
+                    }
+                }
+
+                if (searchText.Length == 0)
+                {
+                    System.Diagnostics.Process.Start("http://murlengine.com/api");
+                }
+                else
+                {
+                    if (searchText.Length > 255)
+                    {
+                        searchText = searchText.Substring(0, 255);
+                    }
+                    System.Diagnostics.Process.Start("http://murlengine.com/api/en/search.php?q=" + System.Web.HttpUtility.UrlEncode(searchText));
+                }
+            }
+            catch (Exception) 
+            { }
+
+            Debug.Print("Show Help: " + searchText);
         }
 
         private void MenuItemCallbackRefresh(object sender, EventArgs e)

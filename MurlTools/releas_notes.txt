@@ -1,5 +1,8 @@
 Murl Tools Release Notes:
 
+Version 1.2
+ - Added a search Murl Engine API command (CTRL-SHIFT-F1)
+
 Version 1.1
  - Fixed VS2015 issues (Required split of VS2013 and VS2015 into separate extensions)
  - Improved Refresh command (add sub directories recursively)
