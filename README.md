@@ -1,7 +1,9 @@
 ## Murl Tools
 ### A Visual Studio extension for VS2013 & VS2015
 
-Download from the [MSDN Visual Studio Gallery](https://gallery.msdn.microsoft.com/ebc2b8d7-9f1b-4e9d-88f7-daf924e422ec)
+Download from the MSDN Visual Studio Gallery:
+[Visual Studio 2013](https://visualstudiogallery.msdn.microsoft.com/ebc2b8d7-9f1b-4e9d-88f7-daf924e422ec)
+[Visual Studio 2015](https://visualstudiogallery.msdn.microsoft.com/cddc2550-2bea-42d5-ba8d-794b95bd2d24)
 
 ## Summary
 
