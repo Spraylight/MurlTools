@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="MurlToolsVS2015.20c3d528-1bd2-4d75-972b-410659112b6c" Version="1.2" Language="en-US" Publisher="Spraylight" />
+    <Identity Id="MurlToolsVS2015.20c3d528-1bd2-4d75-972b-410659112b6c" Version="1.3" Language="en-US" Publisher="Spraylight" />
     <DisplayName>Murl Tools 2015</DisplayName>
     <Description xml:space="preserve">Solution Explorer context menu commands (for Visual Studio 2015):
 - "Duplicate" to create a copy of the selected file(s).

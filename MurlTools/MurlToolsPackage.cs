@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -416,6 +416,10 @@ namespace Spraylight.MurlTools
                 }
 
                 string path =  determinePath(selectedItem);
+                if (path.Length == 0)
+                {
+                    path = guessPath(selectedItem);
+                }
                 if (path.Length > 0)
                 {
                     RefreshSelectedFolder(selectedItem, path);
@@ -423,10 +427,32 @@ namespace Spraylight.MurlTools
             }
         }
 
+        private string guessPath(EnvDTE.UIHierarchyItem selectedItem)
+        {
+            // try "..\..\..\filterName"
+            DTE dte = (DTE)GetService(typeof(DTE));
+            dte = selectedItem.DTE;
+            string solutionDir = System.IO.Path.GetDirectoryName(dte.Solution.FullName);
+            Debug.Write(solutionDir+"\n");
+            solutionDir += "..\\..\\..\\" + selectedItem.Name;
+            string guessedPath = Path.GetFullPath(solutionDir + "..\\..\\..\\" + selectedItem.Name);
+            Debug.Write(guessedPath+"\n");
+            
+            if (Directory.Exists(guessedPath))
+            {
+                Debug.Write("Guessed path found!\n");
+                return guessedPath;
+            }
+            return "";
+        }
+
         private string determinePath(EnvDTE.UIHierarchyItem selectedItem)
         {
             List<UIHierarchyItem> filterList = new List<UIHierarchyItem>();
-            // try to determine path from files
+            // The filter element does not have a path. 
+            // Try to determine the path from nested project files.
+            bool oldExpandedVal = selectedItem.UIHierarchyItems.Expanded;
+            selectedItem.UIHierarchyItems.Expanded = true;
             foreach (UIHierarchyItem item in selectedItem.UIHierarchyItems)
             {
                 if (item.Object is EnvDTE.ProjectItem)
@@ -445,12 +471,13 @@ namespace Spraylight.MurlTools
                         string res = Path.GetDirectoryName(prop.Value.ToString());
                         if (Directory.Exists(res))
                         {
+                            selectedItem.UIHierarchyItems.Expanded = oldExpandedVal;
                             return Path.GetDirectoryName(prop.Value.ToString());
                         }
                     }
                 }
             }
-            // try to determine path from sub folders/filters
+            // if not found, try to determine path from sub folders/filters
             foreach (UIHierarchyItem item in filterList)
             {
                 string path = determinePath(item);
@@ -461,14 +488,28 @@ namespace Spraylight.MurlTools
                         string res = path.Substring(0, path.Length - item.Name.Length-1);
                         if (res.EndsWith(selectedItem.Name) && Directory.Exists(res))
                         {
+                            selectedItem.UIHierarchyItems.Expanded = oldExpandedVal;
                             return res;
                         }
                     }
                     catch (Exception) { }
                 }
             }
+            selectedItem.UIHierarchyItems.Expanded = oldExpandedVal;
             // not able to determine path
             return "";
+        }
+
+        private void printHierarchy(string prefix, EnvDTE.UIHierarchyItem item)
+        {
+            Debug.Write(prefix+item.Name+"\n");
+            bool oldval = item.UIHierarchyItems.Expanded;
+            item.UIHierarchyItems.Expanded = true;
+            foreach (EnvDTE.UIHierarchyItem child in item.UIHierarchyItems)
+            {
+                printHierarchy(prefix + "  ", child);
+            }
+            item.UIHierarchyItems.Expanded = oldval;
         }
 
         private void RefreshSelectedFolder(EnvDTE.UIHierarchyItem selectedItem, string dir)
@@ -476,6 +517,11 @@ namespace Spraylight.MurlTools
             List<string> pathList = new List<string>();
             List<UIHierarchyItem> filterList = new List<UIHierarchyItem>();
             string path = "";
+
+            //printHierarchy("", selectedItem);
+
+            bool oldval = selectedItem.UIHierarchyItems.Expanded;
+            selectedItem.UIHierarchyItems.Expanded = true;
             // Remove references which aren't exist
             foreach (UIHierarchyItem item in selectedItem.UIHierarchyItems)
             {
@@ -484,12 +530,16 @@ namespace Spraylight.MurlTools
                     continue;
                 }
 
+                bool oldval2 = selectedItem.UIHierarchyItems.Expanded;
+                selectedItem.UIHierarchyItems.Expanded = true;
                 if (item.UIHierarchyItems != null && item.UIHierarchyItems.Count > 0)
                 {
                     filterList.Add(item);
+                    selectedItem.UIHierarchyItems.Expanded = oldval2;
                     //filter element
                     continue;
                 }
+                selectedItem.UIHierarchyItems.Expanded = oldval2;
 
                 ProjectItem prjItem = item.Object as ProjectItem;
                 Property prop = GetProperty(prjItem.Properties, "FullPath");
@@ -517,6 +567,7 @@ namespace Spraylight.MurlTools
                     filterList.Add(item);
                 }
             }
+            selectedItem.UIHierarchyItems.Expanded = oldval;
 
             // Add existing files which are not in pathList
             if (dir.Length > 0)
@@ -579,7 +630,6 @@ namespace Spraylight.MurlTools
         {
             string filterName = dirName.Substring(dir.Length + 1);
             VCFilter newFilter = vcFilter.AddFilter(filterName);
-            
             // add files
             string[] fileEntries = Directory.GetFiles(dirName);
             foreach (string file in fileEntries)
